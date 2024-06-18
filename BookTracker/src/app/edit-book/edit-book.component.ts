@@ -41,7 +41,12 @@ export class EditBookComponent implements OnInit {
     this.dataService.setMostPopularBook(this.selectedBook);
   }
 
+  // Calls the updateBook method to send an HTTP PUT request to the server with the updated selectedBook object
   saveChanges(): void {
-    console.warn('Save changes to book not yet implemented.');
+    this.dataService.updateBook(this.selectedBook)
+      .subscribe(
+        (data: void) => console.log(`${this.selectedBook.title} updated!`),
+        (err: any) => console.log(err)
+      );
   }
 }

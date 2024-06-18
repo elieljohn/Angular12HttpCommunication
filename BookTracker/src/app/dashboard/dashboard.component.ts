@@ -34,15 +34,24 @@ export class DashboardComponent implements OnInit {
         // Completion handler: called whn the Observable complets
         () => console.log('Getting all books complete')
       );
-      
+
     this.allReaders = this.dataService.getAllReaders();
     this.mostPopularBook = this.dataService.mostPopularBook;
 
     this.title.setTitle(`Book Tracker`);
   }
 
+  // Calls the deleteBook to send an HTTP DELETE request to the server to delete the book with the specified bookID
+  // If the deletion is successful, the method removes the deleted book from the allBooks array
   deleteBook(bookID: number): void {
-    console.warn(`Delete book not yet implemented (bookID: ${bookID}).`);
+    this.dataService.deleteBook(bookID)
+      .subscribe(
+        (data: void) => {
+          let index: number = this.allBooks.findIndex(book => book.bookID === bookID);
+          this.allBooks.splice(index, 1);
+        },
+        (err: any) => console.log(err)
+      );
   }
 
   deleteReader(readerID: number): void {

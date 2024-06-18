@@ -59,4 +59,30 @@ export class DataService {
         tap(classicBook => console.log('Old Book:', classicBook))
       );
   }
+
+  // Sends an HTTP POST request to the server with the newBook object
+  // Server should respond with a newly added book, returned as an Observable<Book>
+  addBook(newBook: Book): Observable<Book> {
+    return this.http.post<Book>('/api/books', newBook, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    });
+  }
+
+  // Sends an HTTP POST with the updatedBook object
+  // Server should update the book and return a void response
+  updateBook(updatedBook: Book): Observable<void> {
+    return this.http.put<void>(`/api/books/${updatedBook.bookID}`, updatedBook, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    });
+  }
+
+  // Sends an HTTP DELETE request to the server
+  // Server should delete the book with the specified bookID and return void
+  deleteBook(bookID: number): Observable<void> {
+    return this.http.delete<void>(`/api/books/${bookID}`);
+  }
 }
