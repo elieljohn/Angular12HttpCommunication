@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, from } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { allBooks, allReaders } from 'app/data';
 import { Reader } from "app/models/reader";
 import { Book } from "app/models/book";
 import { BookTrackerError } from 'app/models/bookTrackerError';
+import { OldBook } from 'app/models/oldBook';
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +46,17 @@ export class DataService {
         'Authorization': 'my-token'
       })
     });
+  }
+
+  // Retrieves books by IDs and transforms the response to an OldBook object by piping through map
+  getOldBookById(id: number): Observable<OldBook> {
+    return this.http.get<Book>(`/api/bookd/${id}`)
+      .pipe(
+        map(b => <OldBook>{
+          bookTitle: b.title,
+          year: b.publicationYear
+        }),
+        tap(classicBook => console.log('Old Book:', classicBook))
+      );
   }
 }
