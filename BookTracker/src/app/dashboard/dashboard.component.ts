@@ -19,9 +19,22 @@ export class DashboardComponent implements OnInit {
 
   constructor(private dataService: DataService,
               private title: Title) { }
-  
+
   ngOnInit() {
-    this.allBooks = this.dataService.getAllBooks();
+    // Fetch the list of books from the server and store the result in the allBooks property of the component
+    this.dataService.getAllBooks()
+      .subscribe(
+        // Success handler: called when the Observable emits a new value (array of Book objects)
+        // Assigns the emitted data to the allBooks property of the component
+        (data: Book[]) => this.allBooks = data,
+
+        // Error handler: called when an error occurs
+        (err: any) => console.log(err),
+
+        // Completion handler: called whn the Observable complets
+        () => console.log('Getting all books complete')
+      );
+      
     this.allReaders = this.dataService.getAllReaders();
     this.mostPopularBook = this.dataService.mostPopularBook;
 
