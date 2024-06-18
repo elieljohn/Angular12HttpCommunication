@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { allBooks, allReaders } from 'app/data';
@@ -34,7 +34,15 @@ export class DataService {
     return this.http.get<Book[]>('/api/books');
   }
 
-  getBookById(id: number): Book {
-    return allBooks.find(book => book.bookID === id);
+  // Retrieve a specific book from the server
+  getBookById(id: number): Observable<Book> {
+    // Make an HTTP GET request to the server
+    return this.http.get<Book>(`/api/books/${id}`, {
+      // Specify the HTTP headers to include in the request
+      headers: new HttpHeaders({
+        'Accept': 'application/json',
+        'Authorization': 'my-token'
+      })
+    });
   }
 }
