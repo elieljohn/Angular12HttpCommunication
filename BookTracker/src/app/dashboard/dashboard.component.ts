@@ -5,6 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { Book } from "app/models/book";
 import { Reader } from "app/models/reader";
 import { DataService } from 'app/core/data.service';
+import { BookTrackerError } from 'app/models/bookTrackerError';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,10 +27,10 @@ export class DashboardComponent implements OnInit {
       .subscribe(
         // Success handler: called when the Observable emits a new value (array of Book objects)
         // Assigns the emitted data to the allBooks property of the component
-        (data: Book[]) => this.allBooks = data,
+        (data: Book[] | BookTrackerError) => this.allBooks = <Book[]>data,
 
         // Error handler: called when an error occurs
-        (err: any) => console.log(err),
+        (err: BookTrackerError) => console.log(err.friendlyMessage),
 
         // Completion handler: called whn the Observable complets
         () => console.log('Getting all books complete')
