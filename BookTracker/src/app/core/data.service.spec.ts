@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@an
 
 import { DataService } from './data.service';
 import { Book } from 'app/models/book';
+import { BookTrackerError } from 'app/models/bookTrackerError';
 
 describe('DataService Tests', () => {
 
@@ -22,8 +23,8 @@ describe('DataService Tests', () => {
       providers: [ DataService ]
     });
 
-    dataService = TestBed.get(DataService);
-    httpTestingController = TestBed.get(HttpTestingController);
+    dataService = TestBed.inject(DataService);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
@@ -32,19 +33,32 @@ describe('DataService Tests', () => {
 
   it('should GET all books', () => {
     dataService.getAllBooks()
-      .subscribe((data: Book[]) => {
-        expect(data.length).toBe(3);
+      .subscribe((data: Book[] | BookTrackerError) => {
+        expect((<Book[]>data).length).toBe(3);
       });
 
     let booksRequest: TestRequest = httpTestingController.expectOne('/api/books');
     expect(booksRequest.request.method).toEqual('GET');
 
     booksRequest.flush(testBooks);
-
-    httpTestingController.verify();
   });
 
-  it('test 2', () => {
+  it('should return a BookTrackerError', () => {
+    dataService.getAllBooks()
+      .subscribe(
+        (data: Book[] | BookTrackerError) => fail('this should have been an error'),
+        (err: BookTrackerError) => {
+          expect(err.errorNumber).toEqual(100);
+          expect(err.friendlyMessage).toEqual('An error occurred retrieving data.');
+        }
+      );
+
+    let booksRequest: TestRequest = httpTestingController.expectOne('/api/books');
+
+    booksRequest.flush('error', {
+      status: 500,
+      statusText: 'Server Error'
+    });
 
   });
 
