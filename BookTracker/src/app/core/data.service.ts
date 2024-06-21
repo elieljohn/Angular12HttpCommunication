@@ -9,6 +9,7 @@ import { Book } from "app/models/book";
 import { BookTrackerError } from 'app/models/bookTrackerError';
 import { OldBook } from 'app/models/oldBook';
 import { CONTENT_TYPE } from './add-header.interceptor';
+import { CACHEABLE } from './cache.interceptor';
 
 @Injectable({
   providedIn: 'root'
@@ -35,8 +36,8 @@ export class DataService {
   getAllBooks(): Observable<Book[] | BookTrackerError> {
     console.log('Getting all books from the server');
     return this.http.get<Book[]>('/api/books', {
-      // Set the Content-Type header of the request to application/xml
-      context: new HttpContext().set(CONTENT_TYPE, 'application/xml')
+      // Set option in the HttpContext with the key CACHEABLE and its value to false
+      context: new HttpContext().set(CACHEABLE, false )
     })
       .pipe(
         catchError(err => this.handleHttpError(err))
