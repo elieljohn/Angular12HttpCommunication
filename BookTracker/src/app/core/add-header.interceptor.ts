@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
+import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpContextToken } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+// Creates a reusable token that can be used to store and retrieve the Content-Type header value for HTTP requests
+export const CONTENT_TYPE = new HttpContextToken(() => 'application/json')
 
 @Injectable()
 export class AddHeaderInterceptor implements HttpInterceptor {
@@ -10,7 +13,7 @@ export class AddHeaderInterceptor implements HttpInterceptor {
     // Clone the original request object
     let jsonReq: HttpRequest<any> = req.clone({
       // Add header to set Content-Type
-      setHeaders: { 'Content-Type': 'application/json' }
+      setHeaders: { 'Content-Type': req.context.get(CONTENT_TYPE) }
     });
 
     // Pass modified HttpRequest to next.handle
